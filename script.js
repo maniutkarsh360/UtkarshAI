@@ -1,22 +1,17 @@
-function sendMessage() {
-    const userInput = document.getElementById("user-input").value;
-    const chatDisplay = document.getElementById("chat-display");
+async function sendMessage() {
+  const userInput = document.getElementById("user-input").value;
+  if (!userInput) return;
 
-    if (userInput.trim() === "") return;
+  const messages = document.getElementById("messages");
+  messages.innerHTML += `<div><strong>You:</strong> ${userInput}</div>`;
 
-    // Display user message
-    const userMessage = document.createElement("div");
-    userMessage.textContent = "You: " + userInput;
-    chatDisplay.appendChild(userMessage);
+  const response = await fetch("http://127.0.0.1:5000/query", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question: userInput }),
+  });
 
-    // Clear input
-    document.getElementById("user-input").value = "";
-
-    // Fake chatbot response (replace with API call for real responses)
-    const botResponse = document.createElement("div");
-    botResponse.textContent = "Utkarsh AI: I'm here to help!";
-    chatDisplay.appendChild(botResponse);
-
-    // Scroll to bottom
-    chatDisplay.scrollTop = chatDisplay.scrollHeight;
+  const data = await response.json();
+  messages.innerHTML += `<div><strong>Utkarsh AI:</strong> ${data.answer}</div>`;
+  document.getElementById("user-input").value = "";
 }
